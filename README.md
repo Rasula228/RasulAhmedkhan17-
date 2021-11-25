@@ -1,248 +1,84 @@
 # RasulAhmedkhan17-
-#include < iostream >
-
-#include < conio.h >
-
-using namespace std;
-
-bool gameover;
-
-const int width = 20;
-
-const int height = 17;
-
-int x, y, fruitX, fruitY, score;
-
-int tailX[100], tailY[100]; //snake coordinates
-
-int nTail;
-
-enum eDirecton {STOP = 0, LEFT,RIGHT, UP, DOWN}; // Controls
-
-eDirecton dir;
-
-void Setup() {
-gameover = false;
-
-dir = STOP;
-
-x = width / 2;
-
-y = height / 2;
-
-fruitX = rand() % width; //display fruit in a random place
-
-fruitY = rand() % height; score = 0;
-
-}
-
-void Draw() {
-system("cls");
-
-for(int i = 0; i < width+2; i++)
-
-cout << "#";
-
-cout << endl ;
-
-for (int i = 0; i < height ; i++) {
-
-for (int j = 0; j < width; j++) {
-
-if (j == 0)
-
-cout << "#"; //walls
-
-if (i == y && j == x)
-
-cout << "*"; // snake tale
-
-else if (i == fruitY && j == fruitX )
-
-cout << "%"; // change it to change the fruit
-
-else {
-
-bool print = false;
-
-for (int k = 0; k< nTail ; k++) {
-
-if (tailX [k] == j && tailY [k] == i) {
-
-cout << "*"; print = true;
-
-}
-
-}
-
-if (!print) cout << " ";
-
-}
-
-if (j == width -1)
-
-cout << "#";
-
-}
-
-cout << endl;
-
-}
-
-for (int i = 0; i< width+2; i++)
-
-cout << "#";
-
-cout << endl;
-
-cout << "Score:" << score << endl ;
-
-}
-
-void Input ()
-{
-
-if (_kbhit ()) {
-
-switch (_getch ()) {
-
-case 'a':
-
-dir = LEFT;
-
-break;
-
-case 'd':
-
-dir = RIGHT;
-
-break;
-
-case 'w':
-
-dir = UP;
-
-break;
-
-case 's':
-
-dir = DOWN ;
-
-break;
-
-case 'x':
-
-gameover = true;
-
-break;
-
-}
-
-}
-
-}
-
-void algorithm()
-{
-
-int prevX = tailX [0];
-
-int prevY = tailY [0];
-
-int prev2X, prev2Y;
-
-tailX[0] = x;
-
-tailY[0] = y;
-
-for(int i = 1;i < nTail ; i++) {
-
-prev2X = tailX[i];
-
-prev2Y = tailY[i];
-
-tailX[i] = prevX;
-
-tailY[i] = prevY;
-
-prevX = prev2X;
-
-prevY = prev2Y ;
-
-}
-
-switch (dir) {
-
-case LEFT:
-
-x--;
-
-break;
-
-case RIGHT:
-
-x++;
-
-break;
-
-case UP:
-
-y--;
-
-break;
-
-case DOWN:
-
-y++;
-
-break;
-
-default:
-
-break;
-
-}
-
-if (x >= width) x =0;else if (x <0) x = width -1;
-
-if (y >= height) y = 0; else if (y < 0) y = height - 1;
-
-for (int i =0; i< nTail ;i++)
-
-if (tailX[i] == x && tailY[i] == y)
-gameover = true;
-
-if (x == fruitX && y == fruitY) {
-
-score +=10;
-
-fruitX = rand() % width;
-
-fruitY = rand() % height;
-
-nTail ++;
-
-}
-
-}
-
-int main()
-{
-
-Setup();
-
-while (!gameover) {
-
-Draw ();
-
-Input ();
-
-algorithm ();
-
-}
-
-return 0;
-
-}
-
-
+<!DOCTYPE html>
+<html>
+  <head>
+  	<title>Snake Game</title>
+    <link href="https://fonts.googleapis.com/css?family=Antic+Slab" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <canvas id="snakeboard" width="400" height="400"></canvas>
+
+    <style>
+      #snakeboard {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    </style>
+  </body>
+
+  <script>
+    const board_border = 'black';
+    const board_background = "white";
+    const snake_col = 'lightblue';
+    const snake_border = 'darkblue';
+    
+    let snake = [
+      {x: 200, y: 200},
+      {x: 190, y: 200},
+      {x: 180, y: 200},
+      {x: 170, y: 200},
+      {x: 160, y: 200}
+    ]
+    
+    // Get the canvas element
+    const snakeboard = document.getElementById("snakeboard");
+    // Return a two dimensional drawing context
+    const snakeboard_ctx = snakeboard.getContext("2d");
+    // Start game
+    main();
+    
+    // main function called repeatedly to keep the game running
+    function main() {
+        clearCanvas();
+        drawSnake();
+    }
+    
+    // draw a border around the canvas
+    function clearCanvas() {
+      //  Select the colour to fill the drawing
+      snakeboard_ctx.fillStyle = board_background;
+      //  Select the colour for the border of the canvas
+      snakeboard_ctx.strokestyle = board_border;
+      // Draw a "filled" rectangle to cover the entire canvas
+      snakeboard_ctx.fillRect(0, 0, snakeboard.width, snakeboard.height);
+      // Draw a "border" around the entire canvas
+      snakeboard_ctx.strokeRect(0, 0, snakeboard.width, snakeboard.height);
+    }
+    
+    // Draw the snake on the canvas
+    function drawSnake() {
+      // Draw each part
+      snake.forEach(drawSnakePart)
+    }
+    
+    // Draw one snake part
+    function drawSnakePart(snakePart) {
+
+      // Set the colour of the snake part
+      snakeboard_ctx.fillStyle = snake_col;
+      // Set the border colour of the snake part
+      snakeboard_ctx.strokestyle = snake_border;
+      // Draw a "filled" rectangle to represent the snake part at the coordinates
+      // the part is located
+      snakeboard_ctx.fillRect(snakePart.x, snakePart.y, 10, 10);
+      // Draw a border around the snake part
+      snakeboard_ctx.strokeRect(snakePart.x, snakePart.y, 10, 10);
+    }
+    
+  </script>
+</html>
